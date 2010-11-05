@@ -1,0 +1,17 @@
+function PreCanInvokeMethod (MethodName, &CanInvoke)
+{
+	var nReturn = ContinueOperation;
+
+	switch (MethodName)
+	{
+		// duplicate
+		case "":
+		{
+			// code
+			nReturn = CancelOperation;
+			break;
+		}
+	}
+
+	return (nReturn);
+}
