@@ -1,0 +1,38 @@
+// Use this script to create an auto navigate following completion of a TUI.
+
+Browser Script
+--------------
+
+function Applet_Load ()
+{
+	this.InvokeMethod("PostTUINavigate");
+}
+
+Server Script
+-------------
+// Set Next View and Row Id profile attributes in the Task definition before exit
+// Business Service 'SIS OM PMT Service' contains method 'Set Profile Attribute'
+
+case "PostTUINavigate":
+{
+	var strBO="Quote";
+	var strBC="Quote";
+	var strNextView = TheApplication().GetProfileAttr("Next View");
+	var strRowId = TheApplication().GetProfileAttr("Row Id");
+	if (strNextView != "")
+	{
+		TheApplication().SetProfileAttr("Next View", "");
+		var BOQuote = TheApplication().GetBusObject(strBO);
+		var BCQuote = BOQuote.GetBusComp(strBC);
+		with (BCQuote)
+		{
+			ClearToQuery();
+			SetSearchSpec("Id", strRowId);
+			ExecuteQuery(ForwardBackward);
+		}
+		TheApplication().GotoView(strNextView, BOQuote);
+	}
+
+	nReturn = CancelOperation;
+	break;
+}

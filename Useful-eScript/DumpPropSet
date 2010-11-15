@@ -1,0 +1,52 @@
+function DumpPropSet (psPropSet, iLevel) 
+{ 
+  var sTab = String.fromCharCode(9) 
+  var sTabs = ""; 
+  var i = 0; 
+  while (i<iLevel) 
+  { 
+    sTabs = sTabs + sTab; 
+    i++; 
+  } 
+   
+  var sReturn = String.fromCharCode(10) + sTabs; 
+  var sPropSettoString = sTabs + "Level " + iLevel + sReturn; 
+  var sProperty = psPropSet.GetFirstProperty(); 
+  var iNChildren = psPropSet.GetChildCount(); 
+ 
+  sPropSettoString = sPropSettoString + "Type = " + psPropSet.GetType() + sReturn; 
+  sPropSettoString = sPropSettoString + "Value = " + psPropSet.GetValue() + sReturn; 
+ 
+  if (sProperty != "") 
+  { 
+    sPropSettoString = sPropSettoString + "Properties :" + sReturn; 
+    sPropSettoString = sPropSettoString + sTab + sProperty + "="+ psPropSet.GetProperty(sProperty) + sReturn; 
+ 
+    sProperty = psPropSet.GetNextProperty(); 
+    while (sProperty != "") 
+    { 
+      sPropSettoString = sPropSettoString + sTab + sProperty + "=" + psPropSet.GetProperty(sProperty) + sReturn; 
+      sProperty = psPropSet.GetNextProperty(); 
+    } 
+  } 
+ 
+  var sFile = "Dumper"; 
+  var oDate = new Date; 
+  var date = oDate.getDate(); 
+  var month = oDate.getMonth() + 1; 
+  var year = oDate.getFullYear(); 
+  date = (date < 10) ? ("0" + date) : date; 
+  month = (month < 10) ? ("0" + month) : month; 
+  var strDateTime = year + "-" + month + "-" + date + " " + oDate.getHours() + ":" + oDate.getMinutes() + ":" + oDate.getSeconds() + ":" + oDate.getMilliseconds(); 
+  var errFilePointer = Clib.fopen(sFile, "at");  
+  Clib.fputs(strDateTime + "\tDump Of Property Set\n", errFilePointer);  
+  Clib.fputs(strDateTime + "\t" + sPropSettoString + "\n", errFilePointer);  
+  Clib.fclose(errFilePointer);  
+  oDate = null; 
+   
+  for (var iChildN = 0; iChildN < iNChildren; iChildN++) 
+  { 
+    DumpPropSet(psPropSet.GetChild(iChildN), iLevel + 1); 
+  } 
+ 
+}
