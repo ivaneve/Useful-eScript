@@ -1,4 +1,4 @@
-function PreCanInvokeMethod (MethodName, &CanInvoke)
+function Service_PreCanInvokeMethod (MethodName, &CanInvoke)
 {
 	var nReturn = ContinueOperation;
 
