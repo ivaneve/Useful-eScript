@@ -1,0 +1,43 @@
+if (MethodName == "SetSOAPHeaders") {
+
+	//security
+	var username = "uk";
+	var password = "welcome";
+
+	// Create the SOAP header hierarchy with the desired data.
+	var soaHeader = TheApplication().NewPropertySet();
+	var soapHeader = TheApplication().NewPropertySet();
+	soapHeader.SetType("soapEnv:Header");
+	soapHeader.SetProperty("xmlns:soapEnv","http://schemas.xmlsoap.org/soap/envelope/");
+
+	var usernameTokenPS = TheApplication().NewPropertySet();
+	var usernamePS = TheApplication().NewPropertySet();
+	var passwordPS = TheApplication().NewPropertySet();
+	var securityPS = TheApplication().NewPropertySet();
+
+	usernamePS.SetType("wsse:Username");
+	usernamePS.SetValue(username);
+	passwordPS.SetType("wsse:Password");
+	passwordPS.SetValue(password);
+	usernameTokenPS.SetType("wsse:UsernameToken");
+	usernameTokenPS.SetProperty("xmlns:wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+	usernameTokenPS.AddChild(usernamePS);
+	usernameTokenPS.AddChild(passwordPS);
+	securityPS.SetType("wsse:Security");
+	securityPS.SetProperty("xmlns:wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+	securityPS.AddChild(usernameTokenPS);
+	
+	// Add the data to the SOAP header.
+	soapHeader.AddChild(securityPS);
+
+	// Get the SOAP envelope from the SOAP hierarchy.
+	var soapEnv:PropertySet = Inputs.GetChild(0);
+	soaHeader = soapEnv.GetChild(0).GetChild(0);
+	soapHeader.AddChild(soaHeader);
+	soapEnv.GetChild(0).RemoveChild(0);
+	// Add the header to the SOAP envelope.
+	soapEnv.InsertChildAt(soapHeader, 0);
+	Outputs.InsertChildAt(soapEnv, 0);
+//}
+	return(CancelOperation);
+}
